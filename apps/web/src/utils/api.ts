@@ -10,6 +10,9 @@ const api = axios.create({
 api.interceptors.request.use((config) => {
   const token = useAuthStore.getState().token;
   if (token) config.headers.Authorization = 'Bearer ' + token;
+  if (config.url && !config.url.startsWith('/auth') && !config.url.startsWith('/api')) {
+    config.url = `/api${config.url}`;
+  }
   return config;
 });
 
