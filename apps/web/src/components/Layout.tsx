@@ -1,7 +1,10 @@
-
 import { Outlet, useNavigate, useLocation } from 'react-router-dom';
 import { useAuthStore } from '../stores/authStore';
-import { Workflow, LayoutDashboard, GitBranch, Clock, Settings, LogOut, FolderOpen, Zap } from 'lucide-react';
+import {
+  LayoutDashboard, FolderOpen, Clock, Settings, LogOut,
+  Zap, ChevronRight,
+} from 'lucide-react';
+import { useState } from 'react';
 
 const navItems = [
   { path: '/', icon: LayoutDashboard, label: 'Dashboard' },
@@ -14,48 +17,135 @@ export default function Layout() {
   const navigate = useNavigate();
   const location = useLocation();
   const { user, logout } = useAuthStore();
+  const [collapsed, setCollapsed] = useState(false);
 
   return (
-    <div className="min-h-screen bg-gray-950 flex">
+    <div style={{ minHeight: '100vh', display: 'flex', background: 'var(--bg-base)' }}>
       {/* Sidebar */}
-      <aside className="w-64 bg-gray-900 border-r border-gray-800 flex flex-col">
-        <div className="p-4 border-b border-gray-800">
-          <div className="flex items-center gap-3">
-            <div className="w-8 h-8 bg-forge-500 rounded-lg flex items-center justify-center">
-              <Workflow className="w-5 h-5 text-white" />
-            </div>
-            <span className="text-lg font-bold text-white">FlowForge</span>
+      <aside
+        className="sidebar"
+        style={{ width: collapsed ? 56 : 216, flexShrink: 0 }}
+      >
+        {/* Logo */}
+        <div
+          onClick={() => setCollapsed(!collapsed)}
+          style={{
+            padding: collapsed ? '14px 12px' : '14px 14px',
+            borderBottom: '1px solid var(--border-subtle)',
+            display: 'flex', alignItems: 'center', gap: 10,
+            cursor: 'pointer', userSelect: 'none' as const, flexShrink: 0,
+          }}
+        >
+          <div style={{
+            width: 28, height: 28, borderRadius: 7,
+            background: 'linear-gradient(135deg, #0ea5e9 0%, #818cf8 100%)',
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+            flexShrink: 0, boxShadow: '0 2px 8px rgba(14,165,233,0.35)',
+          }}>
+            <Zap size={14} color="white" />
           </div>
+          {!collapsed && (
+            <div>
+              <div style={{ fontSize: 14, fontWeight: 700, color: 'var(--text-primary)', lineHeight: 1 }}>
+                FlowForge
+              </div>
+              <div style={{ fontSize: 9, color: 'var(--text-muted)', marginTop: 2, textTransform: 'uppercase', letterSpacing: '0.06em' }}>
+                Workflow Builder
+              </div>
+            </div>
+          )}
         </div>
-        <nav className="flex-1 p-3 space-y-1">
+
+        {/* Nav */}
+        <nav style={{ flex: 1, padding: '10px 6px', display: 'flex', flexDirection: 'column', gap: 1 }}>
           {navItems.map((item) => {
             const Icon = item.icon;
-            const isActive = location.pathname === item.path;
+            const isActive = location.pathname === item.path ||
+              (item.path !== '/' && location.pathname.startsWith(item.path));
             return (
-              <button key={item.path} onClick={() => navigate(item.path)}
-                className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors ${isActive ? 'bg-forge-500/20 text-forge-400' : 'text-gray-400 hover:bg-gray-800 hover:text-white'}`}>
-                <Icon className="w-5 h-5" /> {item.label}
+              <button
+                key={item.path}
+                onClick={() => navigate(item.path)}
+                title={collapsed ? item.label : undefined}
+                style={{
+                  width: '100%', display: 'flex', alignItems: 'center',
+                  gap: 9, padding: collapsed ? '8px 10px' : '8px 10px',
+                  borderRadius: 7, border: 'none', cursor: 'pointer',
+                  background: isActive ? 'rgba(14,165,233,0.10)' : 'transparent',
+                  color: isActive ? '#38bdf8' : 'var(--text-muted)',
+                  fontSize: 13, fontWeight: isActive ? 600 : 400,
+                  transition: 'all 0.12s', textAlign: 'left' as const,
+                  justifyContent: collapsed ? 'center' : 'flex-start',
+                  borderLeft: isActive ? '2px solid var(--forge-500)' : '2px solid transparent',
+                }}
+                onMouseEnter={e => {
+                  if (!isActive) {
+                    (e.currentTarget as HTMLElement).style.background = 'rgba(255,255,255,0.04)';
+                    (e.currentTarget as HTMLElement).style.color = 'var(--text-primary)';
+                  }
+                }}
+                onMouseLeave={e => {
+                  if (!isActive) {
+                    (e.currentTarget as HTMLElement).style.background = 'transparent';
+                    (e.currentTarget as HTMLElement).style.color = 'var(--text-muted)';
+                  }
+                }}
+              >
+                <Icon size={16} style={{ flexShrink: 0 }} />
+                {!collapsed && <span style={{ flex: 1, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{item.label}</span>}
+                {!collapsed && isActive && <ChevronRight size={11} style={{ opacity: 0.4, flexShrink: 0 }} />}
               </button>
             );
           })}
         </nav>
-        <div className="p-3 border-t border-gray-800">
-          <div className="flex items-center gap-3 px-3 py-2">
-            <div className="w-8 h-8 bg-gray-700 rounded-full flex items-center justify-center text-sm font-medium text-white">
+
+        {/* User */}
+        <div style={{ padding: '6px', borderTop: '1px solid var(--border-subtle)' }}>
+          <div style={{
+            display: 'flex', alignItems: 'center', gap: 8,
+            padding: collapsed ? '8px 6px' : '8px 8px',
+            justifyContent: collapsed ? 'center' : 'flex-start',
+          }}>
+            <div style={{
+              width: 26, height: 26, borderRadius: '50%',
+              background: 'linear-gradient(135deg, #0ea5e9, #818cf8)',
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+              fontSize: 10, fontWeight: 700, color: 'white', flexShrink: 0,
+            }}>
               {user?.name?.charAt(0).toUpperCase() || 'U'}
             </div>
-            <div className="flex-1 min-w-0">
-              <p className="text-sm font-medium text-white truncate">{user?.name}</p>
-              <p className="text-xs text-gray-500 truncate">{user?.email}</p>
-            </div>
-            <button onClick={logout} className="p-1.5 hover:bg-gray-800 rounded-lg transition-colors" title="Logout">
-              <LogOut className="w-4 h-4 text-gray-400" />
-            </button>
+            {!collapsed && (
+              <>
+                <div style={{ flex: 1, overflow: 'hidden', minWidth: 0 }}>
+                  <div style={{ fontSize: 12, fontWeight: 600, color: 'var(--text-primary)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                    {user?.name}
+                  </div>
+                  <div style={{ fontSize: 10, color: 'var(--text-muted)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                    {user?.email}
+                  </div>
+                </div>
+                <button
+                  onClick={logout}
+                  title="Logout"
+                  style={{
+                    background: 'none', border: 'none', cursor: 'pointer',
+                    color: 'var(--text-muted)', padding: '4px', borderRadius: 5,
+                    display: 'flex', alignItems: 'center', transition: 'color 0.15s',
+                    flexShrink: 0,
+                  }}
+                  onMouseEnter={e => (e.currentTarget as HTMLElement).style.color = '#f87171'}
+                  onMouseLeave={e => (e.currentTarget as HTMLElement).style.color = 'var(--text-muted)'}
+                >
+                  <LogOut size={13} />
+                </button>
+              </>
+            )}
           </div>
         </div>
       </aside>
+
       {/* Main content */}
-      <main className="flex-1 overflow-auto">
+      <main style={{ flex: 1, overflow: 'auto', minHeight: '100vh' }}>
         <Outlet />
       </main>
     </div>
