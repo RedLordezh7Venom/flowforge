@@ -222,7 +222,7 @@ reg([
           body: JSON.stringify({ model, messages: msgs, temperature: temp, max_tokens: maxTok }),
         });
         if (!res.ok) return { data: [], error: `OpenAI error ${res.status}: ${await res.text()}` };
-        const data = await res.json() as { choices: Array<{message:{content:string}>} };
+        const data = await res.json() as { choices: Array<{ message: { content: string } }> };
         return { data: [{ json: { response: data.choices?.[0]?.message?.content ?? "", model } }] };
       } catch (e) { return { data: [], error: e instanceof Error ? e.message : String(e) }; }
     },
@@ -258,7 +258,7 @@ reg([
           body: JSON.stringify(body),
         });
         if (!res.ok) return { data: [], error: `Anthropic error ${res.status}: ${await res.text()}` };
-        const data = await res.json() as { content: Array<{text:string}> };
+        const data = await res.json() as { content: Array<{ text: string }> };
         return { data: [{ json: { response: data.content?.[0]?.text ?? "", model } }] };
       } catch (e) { return { data: [], error: e instanceof Error ? e.message : String(e) }; }
     },
