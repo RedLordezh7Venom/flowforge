@@ -1,0 +1,6 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": { "outDir": "./dist", "rootDir": "." },
+  "include": ["src", "prisma"],
+  "references": [{ "path": "../../packages/core" }, { "path": "../../packages/types" }]
+}

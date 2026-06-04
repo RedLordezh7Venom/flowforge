@@ -1,0 +1,17 @@
+
+apiVersion: apps/v1
+kind: Deployment
+metadata: { name: flowforge-worker, namespace: flowforge }
+spec:
+  replicas: 3
+  selector: { matchLabels: { app: flowforge-worker } }
+  template:
+    metadata: { labels: { app: flowforge-worker } }
+    spec:
+      containers:
+        - name: worker
+          image: flowforge/worker:latest
+          env:
+            - name: REDIS_URL
+              valueFrom: { secretKeyRef: { name: flowforge-secrets, key: redis-url } }
+          resources: { requests: { cpu: 250m, memory: 256Mi }, limits: { cpu: 1000m, memory: 1Gi } }

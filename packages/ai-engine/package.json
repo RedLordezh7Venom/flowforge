@@ -1,0 +1,15 @@
+
+{
+  "name": "@flowforge/ai-engine",
+  "version": "1.0.0",
+  "private": true,
+  "main": "./src/index.ts",
+  "types": "./src/index.ts",
+  "scripts": { "build": "tsc", "typecheck": "tsc --noEmit" },
+  "dependencies": {
+    "@flowforge/types": "workspace:*",
+    "openai": "^4.47.0",
+    "@anthropic-ai/sdk": "^0.24.0"
+  },
+  "devDependencies": { "typescript": "^5.4.0" }
+}

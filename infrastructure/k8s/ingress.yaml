@@ -1,0 +1,28 @@
+
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: flowforge-ingress
+  namespace: flowforge
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /
+    cert-manager.io/cluster-issuer: letsencrypt-prod
+    nginx.ingress.kubernetes.io/proxy-read-timeout: "3600"
+    nginx.ingress.kubernetes.io/proxy-send-timeout: "3600"
+spec:
+  tls:
+    - hosts: [flowforge.example.com]
+      secretName: flowforge-tls
+  rules:
+    - host: flowforge.example.com
+      http:
+        paths:
+          - path: /api
+            pathType: Prefix
+            backend: { service: { name: flowforge-api, port: { number: 3001 } } }
+          - path: /ws
+            pathType: Prefix
+            backend: { service: { name: flowforge-api, port: { number: 3001 } } }
+          - path: /
+            pathType: Prefix
+            backend: { service: { name: flowforge-web, port: { number: 80 } } }

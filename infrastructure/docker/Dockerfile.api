@@ -1,0 +1,30 @@
+
+FROM node:20-alpine AS builder
+WORKDIR /app
+RUN corepack enable && corepack prepare pnpm@9.0.0 --activate
+COPY package.json pnpm-workspace.yaml pnpm-lock.yaml ./
+COPY packages/types/package.json packages/types/
+COPY packages/core/package.json packages/core/
+COPY apps/api/package.json apps/api/
+RUN pnpm install --frozen-lockfile
+COPY packages/types/src packages/types/src
+COPY packages/core/src packages/core/src
+COPY apps/api/src apps/api/src
+COPY apps/api/prisma apps/api/prisma
+COPY tsconfig.base.json ./
+RUN cd apps/api && npx prisma generate
+RUN pnpm run build
+
+FROM node:20-alpine
+WORKDIR /app
+RUN corepack enable && corepack prepare pnpm@9.0.0 --activate
+COPY --from=builder /app/node_modules ./node_modules
+COPY --from=builder /app/packages/types/dist packages/types/dist
+COPY --from=builder /app/packages/core/dist packages/core/dist
+COPY --from=builder /app/apps/api/dist apps/api/dist
+COPY --from=builder /app/apps/api/prisma apps/api/prisma
+COPY --from=builder /app/packages/types/package.json packages/types/
+COPY --from=builder /app/packages/core/package.json packages/core/
+COPY --from=builder /app/apps/api/package.json apps/api/
+EXPOSE 3001
+CMD ["node", "apps/api/dist/src/index.js"]

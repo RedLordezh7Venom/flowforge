@@ -1,0 +1,23 @@
+
+apiVersion: apps/v1
+kind: Deployment
+metadata: { name: flowforge-web, namespace: flowforge }
+spec:
+  replicas: 2
+  selector: { matchLabels: { app: flowforge-web } }
+  template:
+    metadata: { labels: { app: flowforge-web } }
+    spec:
+      containers:
+        - name: web
+          image: flowforge/web:latest
+          ports: [{ containerPort: 80 }]
+          resources: { requests: { cpu: 100m, memory: 128Mi }, limits: { cpu: 200m, memory: 256Mi } }
+---
+apiVersion: v1
+kind: Service
+metadata: { name: flowforge-web, namespace: flowforge }
+spec:
+  selector: { app: flowforge-web }
+  ports: [{ port: 80, targetPort: 80 }]
+  type: ClusterIP

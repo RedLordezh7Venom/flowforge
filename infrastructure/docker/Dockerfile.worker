@@ -1,0 +1,26 @@
+
+FROM node:20-alpine AS builder
+WORKDIR /app
+RUN corepack enable && corepack prepare pnpm@9.0.0 --activate
+COPY package.json pnpm-workspace.yaml pnpm-lock.yaml ./
+COPY packages/types/package.json packages/types/
+COPY packages/core/package.json packages/core/
+COPY apps/worker/package.json apps/worker/
+RUN pnpm install --frozen-lockfile
+COPY packages/types/src packages/types/src
+COPY packages/core/src packages/core/src
+COPY apps/worker/src apps/worker/src
+COPY tsconfig.base.json ./
+RUN pnpm run build
+
+FROM node:20-alpine
+WORKDIR /app
+RUN corepack enable && corepack prepare pnpm@9.0.0 --activate
+COPY --from=builder /app/node_modules ./node_modules
+COPY --from=builder /app/packages/types/dist packages/types/dist
+COPY --from=builder /app/packages/core/dist packages/core/dist
+COPY --from=builder /app/apps/worker/dist apps/worker/dist
+COPY --from=builder /app/packages/types/package.json packages/types/
+COPY --from=builder /app/packages/core/package.json packages/core/
+COPY --from=builder /app/apps/worker/package.json apps/worker/
+CMD ["node", "apps/worker/dist/src/index.js"]
