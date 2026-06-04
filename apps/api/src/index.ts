@@ -16,7 +16,7 @@ registerBuiltinNodes()
 
 const app = Fastify({ logger: { transport: { target: 'pino-pretty', options: { colorize: true } } } })
 const PORT = parseInt(process.env['PORT'] || '3001')
-const JWT_SECRET=proces...T'] || 'dev-secret-change-me'
+const JWT_SECRET = process.env['JWT_SECRET'] || 'dev-secret-change-me'
 
 async function start() {
   await app.register(cors, { origin: true, credentials: true })
@@ -37,7 +37,7 @@ async function start() {
 
   try {
     await app.listen({ port: PORT, host: '0.0.0.0' })
-    console.log(`FlowForge API running on http://localhost:${PORT}`)
+    console.log('FlowForge API running on port ' + PORT)
   } catch (err) {
     app.log.error(err)
     process.exit(1)
@@ -45,4 +45,3 @@ async function start() {
 }
 
 start()
-
