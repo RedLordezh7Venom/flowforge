@@ -1,6 +1,7 @@
 {
   "extends": "../../tsconfig.base.json",
   "compilerOptions": { "outDir": "./dist", "rootDir": "." },
+  "files": ["src/types/fastify.d.ts"],
   "include": ["src", "prisma"],
   "references": [{ "path": "../../packages/core" }, { "path": "../../packages/types" }]
 }

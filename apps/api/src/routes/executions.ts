@@ -1,4 +1,5 @@
 import { FastifyInstance } from "fastify";
+import "@fastify/jwt";
 import { prisma } from "../lib/prisma";
 
 export async function executionRoutes(app: FastifyInstance) {

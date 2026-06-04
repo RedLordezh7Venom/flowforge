@@ -1,10 +1,8 @@
 
 import { create } from 'zustand';
 import api from '../utils/api';
+import { Workflow } from '../types';
 
-interface WorkflowNode { id: string; name: string; type: string; position: { x: number; y: number }; parameters: Record<string, unknown>; }
-interface Connection { sourceNodeId: string; sourceOutputIndex: number; targetNodeId: string; targetInputIndex: number; }
-interface Workflow { id: string; name: string; description?: string; nodes: WorkflowNode[]; connections: Connection[]; active: boolean; version: number; tags: string[]; }
 interface WorkflowState {
   workflows: Workflow[];
   currentWorkflow: Workflow | null;
@@ -40,7 +38,7 @@ export const useWorkflowStore = create<WorkflowState>((set, get) => ({
     return res.data.data;
   },
   updateWorkflow: async (id, data) => {
-    const payload = { ...data };
+    const payload: any = { ...data };
     if (data.nodes || data.connections) {
       payload.definition = { nodes: data.nodes || [], connections: data.connections || [] };
       delete payload.nodes;

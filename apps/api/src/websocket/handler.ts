@@ -2,8 +2,9 @@ import { FastifyInstance } from "fastify";
 import { prisma } from "../lib/prisma";
 
 export async function setupWebSocket(app: FastifyInstance) {
-  app.get("/ws/executions/:executionId", { websocket: true }, (socket, req) => {
+  app.get("/ws/executions/:executionId", { websocket: true }, (connection, req) => {
     const { executionId } = req.params as { executionId: string };
+    const socket = connection.socket;
     console.log(`WebSocket connected for execution: ${executionId}`);
 
     socket.on("message", async (message: string) => {
@@ -23,8 +24,9 @@ export async function setupWebSocket(app: FastifyInstance) {
     });
   });
 
-  app.get("/ws/workflows/:workflowId", { websocket: true }, (socket, req) => {
+  app.get("/ws/workflows/:workflowId", { websocket: true }, (connection, req) => {
     const { workflowId } = req.params as { workflowId: string };
+    const socket = connection.socket;
     console.log(`WebSocket connected for workflow: ${workflowId}`);
     socket.send(JSON.stringify({ type: "connected", workflowId }));
     socket.on("message", (message: string) => {

@@ -61,7 +61,7 @@ const worker = new Worker('workflow-execution', async (job: Job) => {
     await updateExecution(executionId, 'failed', undefined, message);
     throw error;
   }
-}, { connection, concurrency: 5 });
+}, { connection: connection as any, concurrency: 5 });
 
 worker.on('completed', (job) => console.log(`Job ${job.id} completed`));
 worker.on('failed', (job, err) => console.error(`Job ${job?.id} failed:`, err));

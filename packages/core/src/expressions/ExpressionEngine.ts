@@ -24,7 +24,7 @@ export class ExpressionEngine {
       if (expr.startsWith("$env.")) return process.env[expr.slice(5)];
       if (expr === "$now") return new Date();
       if (expr === "$today") return new Date().toISOString().split("T")[0];
-      if (expr.startsWith("$workflow.")) return context?.["$workflow"]?.[expr.slice(10)];
+      if (expr.startsWith("$workflow.")) return (context?.["$workflow"] as Record<string, any>)?.[expr.slice(10)];
       if (/^[\d\s+\-*/().]+$/.test(expr)) return Function(`"use strict"; return (${expr})`)();
       if (expr.includes("?") && expr.includes(":")) return this.evaluateTernary(expr, context);
       const variable = this.resolveVariable(expr, context);
@@ -45,7 +45,7 @@ export class ExpressionEngine {
     const match = expr.match(/\$node\("([^"]+)"\)(.*)/);
     if (!match) return undefined;
     const [, nodeName, path] = match;
-    const nodeData = ctx?.["$node"]?.[nodeName];
+    const nodeData = (ctx?.["$node"] as Record<string, any>)?.[nodeName];
     if (!nodeData) return undefined;
     if (!path || path === ".json") return nodeData.json ?? nodeData;
     return this.getNestedValue(nodeData.json ?? nodeData, path.slice(5));

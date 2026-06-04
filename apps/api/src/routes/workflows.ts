@@ -1,4 +1,5 @@
 import { FastifyInstance } from "fastify";
+import "@fastify/jwt";
 import { z } from "zod";
 import { prisma } from "../lib/prisma";
 import { addWorkflowJob } from "../lib/queue";

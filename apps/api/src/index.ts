@@ -1,3 +1,4 @@
+/// <reference path="./types/fastify.d.ts" />
 import Fastify from 'fastify'
 import cors from '@fastify/cors'
 import jwt from '@fastify/jwt'

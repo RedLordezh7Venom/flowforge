@@ -3,8 +3,8 @@ import { Connector } from '../types';
 export const GitHubConnector: Connector = {
   config: { name: 'github', displayName: 'GitHub', description: 'GitHub API', color: '#181717', authType: 'apiKey', baseUrl: 'https://api.github.com' },
   operations: {
-    getRepos: { name: 'getRepos', displayName: 'List Repos', method: 'GET', path: '/user/repos' },
-    createIssue: { name: 'createIssue', displayName: 'Create Issue', method: 'POST', path: '/repos/{owner}/{repo}/issues', parameters: [
+    getRepos: { name: 'getRepos', displayName: 'List Repos', description: 'List repositories for authenticated user', method: 'GET', path: '/user/repos' },
+    createIssue: { name: 'createIssue', displayName: 'Create Issue', description: 'Create an issue in a GitHub repository', method: 'POST', path: '/repos/{owner}/{repo}/issues', parameters: [
       { name: 'owner', displayName: 'Owner', type: 'string', required: true, in: 'path' },
       { name: 'repo', displayName: 'Repo', type: 'string', required: true, in: 'path' },
       { name: 'title', displayName: 'Title', type: 'string', required: true, in: 'body' },
