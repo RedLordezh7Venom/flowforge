@@ -67,7 +67,7 @@ pnpm dev
 
 ```bash
 docker compose up -d
-# Web: http://localhost:3000
+# Web: http://localhost:2324
 # API: http://localhost:3001
 ```
 
@@ -151,6 +151,7 @@ flowforge/
 | REDIS_URL | redis://localhost:6379 | Redis connection string |
 | JWT_SECRET | dev-secret | JWT signing secret |
 | PORT | 3001 | API server port |
+| WEB_PORT | 2324 | Web frontend port |
 | OPENAI_API_KEY | - | OpenAI API key |
 | ANTHROPIC_API_KEY | - | Anthropic API key |
 

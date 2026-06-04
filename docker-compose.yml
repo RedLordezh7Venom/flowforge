@@ -62,7 +62,7 @@ services:
       context: .
       dockerfile: infrastructure/docker/Dockerfile.web
     ports:
-      - "3000:3000"
+      - "2324:80"
     environment:
       VITE_API_URL: http://localhost:3001
 
