@@ -4,7 +4,7 @@ import IORedis from 'ioredis';
 import { WorkflowExecutor, NodeRegistry, EventBus, registerBuiltinNodes } from '@flowforge/core';
 import { Workflow, ExecutionStatus } from '@flowforge/types';
 
-const connection = new IORedis(process.env['REDIS_URL'] || 'redis://localhost:6379', { maxRetriesPerRequest: null });
+const connection = new IORedis(process.env['REDIS_URL'] || 'redis://127.0.0.1:6379', { maxRetriesPerRequest: null });
 
 // Setup registry with built-in nodes
 const registry = new NodeRegistry();
@@ -67,4 +67,4 @@ worker.on('completed', (job) => console.log(`Job ${job.id} completed`));
 worker.on('failed', (job, err) => console.error(`Job ${job?.id} failed:`, err));
 
 console.log('FlowForge Worker started, waiting for jobs...');
-console.log('Connected to Redis at', process.env['REDIS_URL'] || 'redis://localhost:6379');
+console.log('Connected to Redis at', process.env['REDIS_URL'] || 'redis://127.0.0.1:6379');

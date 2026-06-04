@@ -1,7 +1,7 @@
 
-import { Queue, Worker } from "ioredis";
+import { Queue } from "bullmq";
 import IORedis from "ioredis";
-const connection = new IORedis(process.env["REDIS_URL"] || "redis://localhost:6379", { maxRetriesPerRequest: null });
+const connection = new IORedis(process.env["REDIS_URL"] || "redis://127.0.0.1:6379", { maxRetriesPerRequest: null });
 export const workflowQueue = new Queue("workflow-execution", { connection });
 export async function addWorkflowJob(workflowId: string, executionId: string, triggerData?: unknown) {
   return workflowQueue.add("execute", { workflowId, executionId, triggerData }, {
