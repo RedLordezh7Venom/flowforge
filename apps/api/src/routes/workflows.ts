@@ -34,8 +34,35 @@ export async function workflowRoutes(app: FastifyInstance) {
   // Create workflow
   app.post("/api/workflows", { onRequest: [app.authenticate] }, async (req) => {
     const body = workflowSchema.parse(req.body);
+    let projectId = (req.body as any).projectId;
+
+    if (projectId) {
+      const projectExists = await prisma.project.findFirst({
+        where: { id: projectId, ownerId: req.user!.id },
+      });
+      if (!projectExists) {
+        projectId = null;
+      }
+    }
+
+    if (!projectId) {
+      let project = await prisma.project.findFirst({
+        where: { ownerId: req.user!.id },
+      });
+      if (!project) {
+        project = await prisma.project.create({
+          data: {
+            name: "Default Project",
+            description: "Default project for workflows",
+            ownerId: req.user!.id,
+          },
+        });
+      }
+      projectId = project.id;
+    }
+
     const workflow = await prisma.workflow.create({
-      data: { name: body.name, description: body.description, definition: body.definition as any, active: body.active, tags: body.tags, projectId: (req.body as any).projectId, ownerId: req.user!.id },
+      data: { name: body.name, description: body.description, definition: body.definition as any, active: body.active, tags: body.tags, projectId, ownerId: req.user!.id },
     });
     return { success: true, data: workflow };
   });
