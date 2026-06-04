@@ -3,8 +3,8 @@ import { Connector } from '../types';
 export const NotionConnector: Connector = {
   config: { name: 'notion', displayName: 'Notion', description: 'Notion API', color: '#000000', authType: 'apiKey', baseUrl: 'https://api.notion.com/v1' },
   operations: {
-    queryDatabase: { name: 'queryDatabase', displayName: 'Query Database', method: 'POST', path: '/databases/{databaseId}/query' },
-    createPage: { name: 'createPage', displayName: 'Create Page', method: 'POST', path: '/pages' },
+    queryDatabase: { name: 'queryDatabase', displayName: 'Query Database', description: 'Query a Notion database', method: 'POST', path: '/databases/{databaseId}/query' },
+    createPage: { name: 'createPage', displayName: 'Create Page', description: 'Create a new Notion page', method: 'POST', path: '/pages' },
   },
   execute: async (op, params, creds) => {
     const token = creds['token'] as string;

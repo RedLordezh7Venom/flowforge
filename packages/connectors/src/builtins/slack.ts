@@ -7,7 +7,7 @@ export const SlackConnector: Connector = {
       { name: 'channel', displayName: 'Channel', type: 'string', required: true, in: 'body' },
       { name: 'text', displayName: 'Text', type: 'string', required: true, in: 'body' },
     ]},
-    getChannels: { name: 'getChannels', displayName: 'List Channels', method: 'GET', path: '/conversations.list' },
+    getChannels: { name: 'getChannels', displayName: 'List Channels', description: 'List public channels in Slack workspace', method: 'GET', path: '/conversations.list' },
   },
   execute: async (op, params, creds) => {
     const token = creds['token'] as string;
