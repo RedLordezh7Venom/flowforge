@@ -21,35 +21,24 @@ export default function WorkflowToolbar({
 }: Props) {
   return (
     <div style={{
-      height: 52, background: 'var(--bg-surface)',
-      borderBottom: '1px solid var(--border-subtle)',
+      height: 52, background: 'white',
+      borderBottom: '1px solid var(--border-light)',
       display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-      padding: '0 12px', gap: 8, flexShrink: 0,
+      padding: '0 16px', gap: 8, flexShrink: 0,
+      fontFamily: "'Inter', ui-sans-serif, system-ui, sans-serif",
     }}>
       {/* Left: panel toggle + name */}
-      <div style={{ display: 'flex', alignItems: 'center', gap: 8, flex: 1, overflow: 'hidden' }}>
+      <div style={{ display: 'flex', alignItems: 'center', gap: 10, flex: 1, overflow: 'hidden' }}>
         <button
           onClick={onToggleNodePanel}
           title="Toggle node panel"
-          style={{
-            background: 'none', border: 'none', cursor: 'pointer',
-            color: 'var(--text-muted)', padding: '6px',
-            borderRadius: 6, display: 'flex', alignItems: 'center',
-            transition: 'color 0.15s, background 0.15s',
-          }}
-          onMouseEnter={e => {
-            (e.currentTarget as HTMLElement).style.color = 'var(--text-primary)';
-            (e.currentTarget as HTMLElement).style.background = 'var(--bg-elevated)';
-          }}
-          onMouseLeave={e => {
-            (e.currentTarget as HTMLElement).style.color = 'var(--text-muted)';
-            (e.currentTarget as HTMLElement).style.background = 'none';
-          }}
+          className="btn btn-ghost btn-sm"
+          style={{ padding: 6, borderRadius: 'var(--radius-md)' }}
         >
-          <PanelLeft size={18} />
+          <PanelLeft size={16} style={{ color: 'var(--text-tertiary)' }} />
         </button>
 
-        <div style={{ width: 1, height: 20, background: 'var(--border-subtle)' }} />
+        <div style={{ width: 1, height: 18, background: 'var(--border-light)' }} />
 
         {/* Workflow name — inline edit */}
         {editingName ? (
@@ -63,49 +52,41 @@ export default function WorkflowToolbar({
                 onEditingNameChange(false);
               }
             }}
-            style={{
-              background: 'var(--bg-elevated)',
-              border: '1px solid var(--forge-500)',
-              borderRadius: 6, color: 'var(--text-primary)',
-              fontSize: 13, fontWeight: 600, padding: '4px 8px',
-              outline: 'none', boxShadow: '0 0 0 3px rgba(14,165,233,0.12)',
-              width: 200,
-            }}
+            className="input input-sm"
+            style={{ width: 220, fontSize: 13, fontWeight: 600 }}
           />
         ) : (
-          <button
+          <div
             onClick={() => onEditingNameChange(true)}
             title="Click to rename"
             style={{
-              background: 'none', border: 'none', cursor: 'text',
+              cursor: 'pointer',
               color: 'var(--text-primary)', fontSize: 13, fontWeight: 600,
-              padding: '4px 8px', borderRadius: 6,
-              transition: 'background 0.15s',
+              padding: '4px 8px', borderRadius: 'var(--radius-md)',
+              transition: 'background 0.12s',
               maxWidth: 280, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap',
             }}
-            onMouseEnter={e => (e.currentTarget as HTMLElement).style.background = 'var(--bg-elevated)'}
-            onMouseLeave={e => (e.currentTarget as HTMLElement).style.background = 'none'}
+            onMouseEnter={e => (e.currentTarget as HTMLElement).style.background = 'var(--bg-hover)'}
+            onMouseLeave={e => (e.currentTarget as HTMLElement).style.background = 'transparent'}
           >
             {workflowName}
-          </button>
+          </div>
         )}
       </div>
 
       {/* Right: actions */}
-      <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+      <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
         {hasResults && (
           <button
             onClick={onShowResults}
+            className="btn btn-sm"
             style={{
-              background: 'rgba(34,197,94,0.1)', border: '1px solid rgba(34,197,94,0.2)',
-              color: '#4ade80', borderRadius: 7, padding: '5px 12px',
-              fontSize: 12, fontWeight: 500, cursor: 'pointer',
-              display: 'flex', alignItems: 'center', gap: 5,
-              transition: 'all 0.15s',
+              background: 'var(--success-bg)', border: '1px solid var(--success-border)',
+              color: '#027A48', fontWeight: 600,
             }}
           >
             <CheckCircle2 size={13} />
-            Results
+            Show Results
           </button>
         )}
 
@@ -113,20 +94,8 @@ export default function WorkflowToolbar({
           onClick={onSave}
           disabled={isSaving}
           title="Save (⌘S)"
-          style={{
-            background: 'var(--bg-elevated)', border: '1px solid var(--border-default)',
-            color: isSaving ? 'var(--text-muted)' : 'var(--text-primary)',
-            borderRadius: 7, padding: '6px 14px',
-            fontSize: 12, fontWeight: 500, cursor: isSaving ? 'default' : 'pointer',
-            display: 'flex', alignItems: 'center', gap: 6,
-            transition: 'all 0.15s',
-          }}
-          onMouseEnter={e => {
-            if (!isSaving) (e.currentTarget as HTMLElement).style.background = 'var(--bg-overlay)';
-          }}
-          onMouseLeave={e => {
-            (e.currentTarget as HTMLElement).style.background = 'var(--bg-elevated)';
-          }}
+          className="btn btn-secondary btn-sm"
+          style={{ fontWeight: 600 }}
         >
           <Save size={13} />
           {isSaving ? 'Saving...' : 'Save'}
@@ -136,17 +105,8 @@ export default function WorkflowToolbar({
           onClick={onExecute}
           disabled={isExecuting}
           title="Run workflow (⌘↵)"
-          style={{
-            background: isExecuting
-              ? 'rgba(34,197,94,0.2)'
-              : 'linear-gradient(135deg, #16a34a, #15803d)',
-            border: 'none',
-            color: 'white', borderRadius: 7, padding: '6px 14px',
-            fontSize: 12, fontWeight: 600, cursor: isExecuting ? 'default' : 'pointer',
-            display: 'flex', alignItems: 'center', gap: 6,
-            transition: 'all 0.15s',
-            boxShadow: isExecuting ? 'none' : '0 2px 8px rgba(22,163,74,0.35)',
-          }}
+          className="btn btn-primary btn-sm"
+          style={{ fontWeight: 600, background: 'var(--primary)', color: 'white' }}
         >
           {isExecuting ? (
             <>
@@ -160,7 +120,7 @@ export default function WorkflowToolbar({
             </>
           ) : (
             <>
-              <Play size={13} fill="white" />
+              <Play size={13} fill="white" stroke="none" />
               Run
             </>
           )}

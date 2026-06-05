@@ -6,30 +6,17 @@ import {
   Shuffle, Timer, Mail, Zap, Database, FileJson,
 } from 'lucide-react';
 
-const categoryIcons: Record<string, React.ElementType> = {
-  trigger: MousePointer,
-  webhook: Webhook,
-  schedule: Clock,
-  action: Globe,
-  ai: Bot,
-  logic: GitBranch,
-  transform: SlidersHorizontal,
-  communication: MessageSquare,
-  database: Database,
-  custom: Zap,
-};
-
 const categoryColors: Record<string, string> = {
   trigger: '#FF9800',
   webhook: '#FF6D5A',
   schedule: '#00C853',
-  action: '#4CAF50',
-  ai: '#10A37F',
-  logic: '#FF5722',
-  transform: '#2196F3',
-  communication: '#E91E63',
-  database: '#795548',
-  custom: '#9C27B0',
+  action: '#155EEF',
+  ai: '#7C3AED',
+  logic: '#EF4444',
+  transform: '#06AED4',
+  communication: '#EC4899',
+  database: '#F79009',
+  custom: '#667085',
 };
 
 function getNodeIcon(nodeType: string): React.ElementType {
@@ -68,7 +55,7 @@ interface CustomNodeData {
 function CustomNodeComponent({ data, selected }: NodeProps<CustomNodeData>) {
   const [hovered, setHovered] = useState(false);
   const category = data.nodeDef?.category || data.nodeType?.split('.')[1] || 'custom';
-  const color = data.color || categoryColors[category] || '#6B7280';
+  const color = data.color || categoryColors[category] || '#667085';
   const Icon = getNodeIcon(data.nodeType);
   const status = data.status || 'idle';
   const inputs = data.inputs || [];
@@ -76,16 +63,16 @@ function CustomNodeComponent({ data, selected }: NodeProps<CustomNodeData>) {
 
   const statusColors: Record<NodeStatus, string> = {
     idle: 'transparent',
-    running: '#0ea5e9',
-    success: '#22c55e',
-    error: '#ef4444',
-    skipped: '#6b7280',
+    running: '#155EEF',
+    success: '#12B76A',
+    error: '#F04438',
+    skipped: '#98A2B3',
   };
 
   const statusGlow: Partial<Record<NodeStatus, string>> = {
-    running: '0 0 12px rgba(14,165,233,0.4)',
-    success: '0 0 12px rgba(34,197,94,0.3)',
-    error: '0 0 12px rgba(239,68,68,0.3)',
+    running: '0 0 8px rgba(21,94,239,0.3)',
+    success: '0 0 8px rgba(18,183,106,0.2)',
+    error: '0 0 8px rgba(240,68,56,0.2)',
   };
 
   return (
@@ -94,31 +81,32 @@ function CustomNodeComponent({ data, selected }: NodeProps<CustomNodeData>) {
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
       style={{
-        minWidth: 180,
+        minWidth: 200,
         borderColor: selected
-          ? '#0ea5e9'
+          ? 'var(--primary-border)'
           : hovered
-          ? 'rgba(255,255,255,0.18)'
-          : 'rgba(255,255,255,0.06)',
+          ? 'var(--border-strong)'
+          : 'var(--border-light)',
         boxShadow: selected
-          ? `0 0 0 2px rgba(14,165,233,0.25), 0 4px 24px rgba(0,0,0,0.4)${statusGlow[status] ? ', ' + statusGlow[status] : ''}`
-          : statusGlow[status] || (hovered ? '0 4px 24px rgba(0,0,0,0.4)' : 'none'),
-        transition: 'border-color 0.15s, box-shadow 0.15s',
+          ? `0 0 0 2px rgba(21,94,239,0.15), var(--shadow-lg)${statusGlow[status] ? ', ' + statusGlow[status] : ''}`
+          : statusGlow[status] || (hovered ? 'var(--shadow-md)' : 'var(--shadow-sm)'),
+        transition: 'border-color 0.15s, box-shadow 0.15s, transform 0.15s',
+        background: 'white',
       }}
     >
-      {/* Status bar */}
+      {/* Status Bar */}
       <div
         className={`flow-node-status ${status}`}
         style={{
           background: status === 'running'
-            ? 'linear-gradient(90deg, #0ea5e9, #818cf8, #0ea5e9)'
+            ? 'linear-gradient(90deg, #155EEF, #7C3AED, #155EEF)'
             : statusColors[status],
           backgroundSize: status === 'running' ? '200% 100%' : undefined,
           animation: status === 'running' ? 'shimmer 1.5s linear infinite' : undefined,
         }}
       />
 
-      {/* Input handles */}
+      {/* Inputs */}
       {inputs.map((input, i) => (
         <Handle
           key={`input-${i}`}
@@ -127,58 +115,59 @@ function CustomNodeComponent({ data, selected }: NodeProps<CustomNodeData>) {
           id={String(i)}
           style={{
             background: color,
-            top: inputs.length === 1 ? '50%' : `${20 + i * 24}px`,
+            top: inputs.length === 1 ? '50%' : `${36 + i * 24}px`,
           }}
           title={input.displayName}
         />
       ))}
 
       {/* Header */}
-      <div className="flow-node-header">
+      <div className="flow-node-header" style={{ padding: '12px 14px 10px' }}>
         <div
           className="flow-node-icon"
-          style={{ background: `${color}22`, color }}
+          style={{ background: `${color}14`, color: color }}
         >
-          <Icon size={14} />
+          <Icon size={14} strokeWidth={2.5} />
         </div>
         <div style={{ flex: 1, overflow: 'hidden' }}>
-          <div className="flow-node-title" style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+          <div className="flow-node-title" style={{ fontSize: 13, color: 'var(--text-primary)', fontWeight: 600, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
             {data.label}
           </div>
-          <div className="flow-node-type">
+          <div className="flow-node-type" style={{ fontSize: 10, color: 'var(--text-tertiary)', textTransform: 'uppercase', letterSpacing: '0.04em', fontWeight: 500 }}>
             {category}
           </div>
         </div>
         {status !== 'idle' && (
           <div style={{
-            width: 6, height: 6, borderRadius: '50%',
+            width: 7, height: 7, borderRadius: '50%',
             background: statusColors[status],
             flexShrink: 0,
-            boxShadow: statusGlow[status],
+            animation: status === 'running' ? 'pulse-dot 1.5s infinite' : 'none',
           }} />
         )}
       </div>
 
-      {/* Body: show key parameter preview */}
+      {/* Body: Preview Node Config parameters */}
       {data.parameters && Object.keys(data.parameters).length > 0 && (
-        <div className="flow-node-body">
+        <div className="flow-node-body" style={{ padding: '8px 14px 12px', borderTop: '1px solid var(--border-light)', background: '#FCFCFD' }}>
           {Object.entries(data.parameters).slice(0, 2).map(([key, val]) => (
-            <div key={key} style={{ display: 'flex', gap: 4, marginBottom: 2 }}>
-              <span style={{ fontSize: 10, color: 'var(--text-muted)', flexShrink: 0, textTransform: 'capitalize' }}>
+            <div key={key} style={{ display: 'flex', gap: 4, marginBottom: 3, alignItems: 'center' }}>
+              <span style={{ fontSize: 10, color: 'var(--text-tertiary)', flexShrink: 0, textTransform: 'capitalize', fontWeight: 500 }}>
                 {key.replace(/([A-Z])/g, ' $1').toLowerCase().trim()}:
               </span>
               <span style={{
                 fontSize: 10, color: 'var(--text-secondary)',
-                overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', flex: 1
+                overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', flex: 1,
+                fontFamily: 'monospace',
               }}>
-                {String(val).slice(0, 30) || '—'}
+                {typeof val === 'object' ? JSON.stringify(val) : String(val).slice(0, 30) || '—'}
               </span>
             </div>
           ))}
         </div>
       )}
 
-      {/* Output handles */}
+      {/* Outputs */}
       {outputs.map((output, i) => (
         <Handle
           key={`output-${i}`}
@@ -187,7 +176,7 @@ function CustomNodeComponent({ data, selected }: NodeProps<CustomNodeData>) {
           id={String(i)}
           style={{
             background: color,
-            top: outputs.length === 1 ? '50%' : `${20 + i * 24}px`,
+            top: outputs.length === 1 ? '50%' : `${36 + i * 24}px`,
           }}
           title={output.displayName}
         />
